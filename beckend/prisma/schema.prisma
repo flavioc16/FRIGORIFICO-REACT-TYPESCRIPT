@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+//Criar migration: yarn prisma migrate dev
+model User{
+  id String @id @default(uuid())
+  name String
+  username String
+  password String
+
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@map("users")
+  client Client?
+  
+}
+
+model Client{
+  id String @id @default(uuid())
+  name String
+  reference String
+  address String
+  telephone String
+  limit String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("clients")
+  purchases Purchase[]
+  payments Payment[]
+  user_id String @unique
+}
+
+model Purchase{
+  id String @id @default(uuid())
+  description String
+  type String
+  total Float
+  status Boolean @default(false)
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  client Client @relation(fields: [client_id], references: [id])
+
+  @@map("purchases")
+  client_id String
+}
+
+model Order {
+  id String @id @default(uuid())
+  description String
+  status Boolean @default(false)
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@map("orders")
+}
+
+model Pupplier{
+  id String @id @default(uuid())
+  name String
+  reference String
+  address String
+  telephone String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@map("puppliers")
+}
+
+model Reminder{
+  id String @id @default(uuid())
+  description String
+  status Boolean @default(false)
+  promotion Boolean
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@map("sticknotes")
+}
+
+model Loginfo{
+  id String @id @default(uuid())
+  description String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@map("logs")
+}
+
+model Payment{
+  id String @id @default(uuid())
+  value Float
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  client Client @relation(fields: [client_id], references: [id])
+
+  @@map("payments")
+  client_id String
+}
+
+model Product{
+  id String @id @default(uuid())
+  name String
+  brand String
+  value Float
+  value_p Float
+  banner String?
+  promotion Boolean
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@map("products")
+}
